@@ -1,0 +1,91 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background-color: #e01a38;
+}
+
+.container {
+    background-color: #171821;
+    width: 90%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 5em 2em;
+    position: absolute;
+    transform: translateX(-50%);
+    left: 50%;
+    right: 50%;
+    border-radius: 1em;
+}
+
+.input-container {
+    display: grid;
+    grid-template-columns: 9fr 3fr;
+    gap: 1em;
+}
+
+input {
+    padding: 1em 0.5em;
+    background-color: #3a3939;
+    color: #ffffff;
+    border: none;
+    border-radius: 0.5em;
+    outline: none;
+}
+
+button {
+    outline: none;
+    border: none;
+    background-color: #e01a38;
+    color: #ffffff;
+    border-radius: 0.5em;
+}
+
+.photogroup {
+    position: relative;
+    width: 20%;
+    margin: 10px;
+}
+
+.grid-body {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.hidden-div {
+    display: none;
+    position: relative;
+    top: 0%; /* Position below the image */
+    left: 0;
+    padding: 10px;
+    width: 100%; /* Adjust width as needed */
+    z-index: 1; /* Ensure it's above other content */
+    text-align: center;
+}
+
+.comicDetails {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    margin: 0;
+    text-align: center;
+}
+
+.hover-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.photogroup:hover .hidden-div {
+    display: block;
+}

@@ -1,11 +1,10 @@
 {% extends "base.html" %} {% block content %}
-<h1>Comic List</h1>
+<h1 class="comicTitle">Comic List</h1>
 <input type="text" id="filterInput" placeholder="Filter by state...">
 
 <div class="grid-body">
     {% for comic in spidermancomics %}
     <div class="photogroup" data-state="{{comic.issuenumber}}">
-        
         <img class="hover-image" src="{{comic.img_path}}.{{comic.img_extension}}" alt="Marvel Image">
         <div class="comicDetails">
             <div class="hidden-div">{{comic.state}}</div>

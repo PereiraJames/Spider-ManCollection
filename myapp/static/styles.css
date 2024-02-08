@@ -46,6 +46,7 @@ button {
 }
 
 .photogroup {
+    /* perspective: 1000; */
     position: relative;
     width: 20%;
     margin: 10px;
@@ -80,7 +81,9 @@ button {
     text-align: center;
 }
 
-.hover-image {
+.image-front, .image-back {
+    backface-visibility: hidden;
+
     width: 100%;
     height: auto;
     display: block;
@@ -88,4 +91,8 @@ button {
 
 .photogroup:hover .hidden-div {
     display: block;
+}
+
+.comicTitle{
+    color: white;
 }

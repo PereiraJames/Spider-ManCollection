@@ -4,10 +4,36 @@
 
 <div class="grid-body">
     {% for comic in spidermancomics %}
-    <div class="photogroup" data-state="{{comic.issuenumber}}">
-        <img class="hover-image" src="{{comic.img_path}}.{{comic.img_extension}}" alt="Marvel Image">
+    <div class="photogroup" data-state="{{comic.state}}">
+        <div class="flipper">
+            <img class="image-front" src="{{comic.img_path}}.{{comic.img_extension}}" alt="Marvel Image">
+            <div class="image-back">
+                <div>       
+                    <form id="stateForm" method="POST" action="/comiclist/">  
+                        {% csrf_token %}  
+                        <input type="hidden" name="comic_id" value= {{ comic.comicid }}>
+                        <div>
+                            <select name="new_state">
+                                <option value="None" {% if comic.state == 'None' %} selected {% endif %}>None</option>
+                                <option value="Damaged" {% if comic.state == 'Damaged' %} selected {% endif %}>Damaged</option>
+                                <option value="Owned" {% if comic.state == 'Owned' %} selected {% endif %}>Owned</option>
+                            </select>  
+                        </div>
+                        <button type="submit" id="submitButton">Update!</button>  
+                    </form>  
+                </div>
+                <div>
+                    Issue No: #{{comic.issuenumber}}
+                </div>
+                <div>
+                    Series Year: {{comic.series_year}}
+                </div>
+                <div>
+                    Comic Id: {{comic.comicid}}
+                </div>
+            </div>
+        </div>
         <div class="comicDetails">
-            <div class="hidden-div">{{comic.state}}</div>
             {{ comic.title }}
         </div>
     </div>

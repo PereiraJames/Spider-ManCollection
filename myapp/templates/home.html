@@ -9,12 +9,40 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-<title>My HTML Page</title>
+<title>AMS Collection</title>
 </head>
-<body>
+<div>
+    <div class="div-sticky">
+        <div class="title-banner">
+                The Amazing Spider-Man Collection
+        </div>
+        <div class="filter-container">
+                <label class="comics-filter-label" for="issueNumberFilter">Issue Number:</label>
+                <input class="search-filter" type="text" id="issueNumberFilter" placeholder="Enter Issue Number">
+
+                <label class="comics-filter-label" for="stateFilter">State:</label>
+                <select id="stateFilter" class="comics-filter">
+                    <option value="">All</option>
+                    <option value="None">None</option>
+                    <option value="Damaged">Damaged</option>
+                    <option value="Owned">Owned</option>
+                </select>
+
+                <label class="comics-filter-label" for="seriesYearFilter">Series:</label>
+                <select id="seriesYearFilter" class="comics-filter">
+                    <option value="">All</option>
+                    <option value= 1963>1963</option>
+                    <option value= 1999>1999</option>
+                    <option value= 2015>2015</option>
+                    <option value= 2018>2018</option>
+                </select>
+        </div>
+    </div>
+    
+
     <div class="grid-body">
         {% for comic in spidermancomics %}
-        <div class="photogroup" data-state="{{comic.state}}">
+        <div class="photogroup" data-issuenumber="{{ comic.issuenumber }}" data-state="{{ comic.state }}" data-seriesyear="{{ comic.series_year }}"> 
             <div class="flipper">
                 <img class="image-front" src="{{comic.img_path}}.{{comic.img_extension}}" alt="Marvel Image">
                 <div class="image-back">
@@ -22,13 +50,12 @@
                         <form id="post-form">  
                             {% csrf_token %}  
                             <input type="hidden" id="comic_id_{{ comic.comicid }}" name="comic_id" value= "{{ comic.comicid }}"">
-                            <select id="changed_state_{{ comic.comicid }}" name="changed_state">
-                                <option value="None">None</option>
-                                <option value="Damaged">Damaged</option>
-                                <option value="Owned">Owned</option>
+                            <select class="filter-button" id="changed_state_{{ comic.comicid }}" name="changed_state">
+                                <option value="None" {% if comic.state == 'None' %} selected {% endif %}>None</option>
+                                <option value="Damaged" {% if comic.state == 'Damaged' %} selected {% endif %}>Damaged</option>
+                                <option value="Owned" {% if comic.state == 'Owned' %} selected {% endif %}>Owned</option>
                             </select>
-                            <!-- <input type="text" id="changed_state_{{ comic.comicid }}" name="changed_state" placeholder="state!"> -->
-                            <button type="submit">Update!</button>  
+                            <button class="submit-button" type="submit">Update!</button>  
                         </form>  
                     </div>
                     <div>
@@ -43,7 +70,7 @@
                     <h5 id="result_{{ comic.comicid }}"></h5>
                 </div>
             </div>
-            <div class="comicDetails">
+            <div class="comicDetails {% if comic.state == 'Damaged' %} damaged-issue {% elif comic.state == 'Owned' %} owned-issue {% endif %}">
                 {{ comic.title }}
             </div>
         </div>
@@ -51,31 +78,57 @@
     </div>
 
 
-<script type="text/javascript">
-    $(document).on('submit', '#post-form', function(e){
-    e.preventDefault();
-
-    var comicId = $(this).find('input[name="comic_id"]').val();
-    var changedState = $(this).find('select[name="changed_state"]').val();
-    var csrfToken = $(this).find('input[name="csrfmiddlewaretoken"]').val();
-    $.ajax({
-        type: 'POST',
-        url: '/create',
-        data: {
-            comic_id: comicId,
-            changed_state: changedState,
-            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-        },
-        success: function(data){
-            $('#result_' + comicId).html(data);
-
-            setTimeout(function() {
-                    $('#result_' + comicId).empty(); // Empty the content of the <h5> tag
-                }, 2000);
-        }
-        })
-    })
-</script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Event handler for form submission
+            $(document).on('submit', '#post-form', function(e) {
+                e.preventDefault();
+                var form = $(this);
+                var comicId = form.find('input[name="comic_id"]').val();
+                var changedState = form.find('select[name="changed_state"]').val();
+                var csrfToken = form.find('input[name="csrfmiddlewaretoken"]').val();
+                $.ajax({
+                    type: 'POST',
+                    url: '/create',
+                    data: {
+                        comic_id: comicId,
+                        changed_state: changedState,
+                        csrfmiddlewaretoken: csrfToken
+                    },
+                    success: function(data) {
+                        $('#result_' + comicId).html(data); // Display the success message
+    
+                        // Hide the success message after 2 seconds
+                        setTimeout(function() {
+                            $('#result_' + comicId).empty(); // Empty the content of the <h5> tag
+                        }, 2000); // 2000 milliseconds = 2 seconds
+                    }
+                });
+            });
+    
+            $('#seriesYearFilter, #stateFilter, #issueNumberFilter').on('change keyup', function() {
+                var selectedYear = parseInt($('#seriesYearFilter').val(), 10);
+                var selectedState = $('#stateFilter').val().toLowerCase();
+                var selectedIssueNumber = $('#issueNumberFilter').val();
+                
+                $('.photogroup').each(function() {
+                    var comicYear = parseInt($(this).data('seriesyear'), 10);
+                    var comicState = $(this).data('state').toLowerCase();
+                    var comicIssueNumber = $(this).data('issuenumber').toString();
+                    
+                    var yearCondition = isNaN(selectedYear) || comicYear === selectedYear;
+                    var stateCondition = selectedState === '' || comicState === selectedState;
+                    var issueNumberCondition = selectedIssueNumber === '' || comicIssueNumber.indexOf(selectedIssueNumber) !== -1;
+                    
+                    if (yearCondition && stateCondition && issueNumberCondition) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>

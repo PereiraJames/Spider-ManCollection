@@ -1,6 +1,11 @@
 {% extends "base.html" %} {% block content %}
 <h1 class="comicTitle">Comic List</h1>
-<input type="text" id="filterInput" placeholder="Filter by state...">
+<select id="filterDropdown">
+    <option value="None">None</option>
+    <option value="Damaged">Damaged</option>
+    <option value="Owned">Owned</option>
+    <option value="All">All</option> <!-- Add an option for displaying all photogroups -->
+</select>
 
 <div class="grid-body">
     {% for comic in spidermancomics %}
@@ -9,7 +14,7 @@
             <img class="image-front" src="{{comic.img_path}}.{{comic.img_extension}}" alt="Marvel Image">
             <div class="image-back">
                 <div>       
-                    <form id="stateForm" method="POST" action="/comiclist/">  
+                    <form id="updateForm" method="POST" action="/comiclist/" >  
                         {% csrf_token %}  
                         <input type="hidden" name="comic_id" value= {{ comic.comicid }}>
                         <div>
@@ -19,7 +24,7 @@
                                 <option value="Owned" {% if comic.state == 'Owned' %} selected {% endif %}>Owned</option>
                             </select>  
                         </div>
-                        <button type="submit" id="submitButton">Update!</button>  
+                        <button type="submit" id="addToCollectionButton">Update!</button>  
                     </form>  
                 </div>
                 <div>
@@ -40,4 +45,3 @@
     {% endfor %}
 </div>
 {% endblock %}
-

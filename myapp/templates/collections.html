@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block content %}
+<h1 class="comicTitle">Comic List</h1>
+<select id="filterDropdown">
+    <option value="None">None</option>
+    <option value="Damaged">Damaged</option>
+    <option value="Owned">Owned</option>
+    <option value="All">All</option> <!-- Add an option for displaying all photogroups -->
+</select>
+
+<div class="grid-body">
+    {% for comic in spidermancomics %}
+    <div style="color: white; text-align:  center; background-color: black; margin: 10px; width: 300px">
+        <img style="width: 300px; height: 450px" src="{{comic.img_path}}.{{comic.img_extension}}" alt="Marvel Image">
+        <div>
+            {{comic.title}}
+        </div>
+        <div>
+            {{comic.comicid}}
+        </div>
+        <div>
+            {{comic.issuenumber}}
+        </div>
+        <div>
+            {{comic.series_year}}
+        </div>
+        <div>
+            
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

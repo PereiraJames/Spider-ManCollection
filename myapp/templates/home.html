@@ -1,4 +1,72 @@
-{% extends "base.html" %} {% block title %} Home Page {% endblock %}
-{% block content %}
-<p>This is the Home Page</p>
-{% endblock %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<title>My HTML Page</title>
+</head>
+<body>
+    <div class="grid-body">
+        {% for comic in spidermancomics %}
+        <div class="photogroup" data-state="{{comic.state}}">
+            <div class="flipper">
+                <img class="image-front" src="{{comic.img_path}}.{{comic.img_extension}}" alt="Marvel Image">
+                <div class="image-back">
+                    <div>       
+                        <form id="post-form">  
+                            {% csrf_token %}  
+                            <input type="hidden" id="comic_id_{{ comic.comicid }}" name="comic_id" value= "{{ comic.comicid }}"">
+                            <input type="text" id="changed_state_{{ comic.comicid }}" name="changed_state" placeholder="state!">
+                            <button type="submit">Update!</button>  
+                        </form>  
+                    </div>
+                    <h5></h5>
+                    <div>
+                        Issue No: #{{comic.issuenumber}}
+                    </div>
+                    <div>
+                        Series Year: {{comic.series_year}}
+                    </div>
+                    <div>
+                        Comic Id: {{comic.comicid}}
+                    </div>
+                </div>
+            </div>
+            <div class="comicDetails">
+                {{ comic.title }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+<script type="text/javascript">
+    $(document).on('submit', '#post-form', function(e){
+    e.preventDefault();
+
+    var comicId = $(this).find('input[name="comic_id"]').val();
+    var changedState = $(this).find('input[name="changed_state"]').val();
+    var csrfToken = $(this).find('input[name="csrfmiddlewaretoken"]').val();
+    $.ajax({
+        type: 'POST',
+        url: '/create',
+        data: {
+            comic_id: comicId,
+            changed_state: changedState,
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+        },
+        success: function(data){
+            $("h5").html(data)
+        }
+        })
+    })
+</script>
+
+</body>
+</html>

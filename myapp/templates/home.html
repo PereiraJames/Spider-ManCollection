@@ -22,11 +22,15 @@
                         <form id="post-form">  
                             {% csrf_token %}  
                             <input type="hidden" id="comic_id_{{ comic.comicid }}" name="comic_id" value= "{{ comic.comicid }}"">
-                            <input type="text" id="changed_state_{{ comic.comicid }}" name="changed_state" placeholder="state!">
+                            <select id="changed_state_{{ comic.comicid }}" name="changed_state">
+                                <option value="None">None</option>
+                                <option value="Damaged">Damaged</option>
+                                <option value="Owned">Owned</option>
+                            </select>
+                            <!-- <input type="text" id="changed_state_{{ comic.comicid }}" name="changed_state" placeholder="state!"> -->
                             <button type="submit">Update!</button>  
                         </form>  
                     </div>
-                    <h5></h5>
                     <div>
                         Issue No: #{{comic.issuenumber}}
                     </div>
@@ -36,6 +40,7 @@
                     <div>
                         Comic Id: {{comic.comicid}}
                     </div>
+                    <h5 id="result_{{ comic.comicid }}"></h5>
                 </div>
             </div>
             <div class="comicDetails">
@@ -51,7 +56,7 @@
     e.preventDefault();
 
     var comicId = $(this).find('input[name="comic_id"]').val();
-    var changedState = $(this).find('input[name="changed_state"]').val();
+    var changedState = $(this).find('select[name="changed_state"]').val();
     var csrfToken = $(this).find('input[name="csrfmiddlewaretoken"]').val();
     $.ajax({
         type: 'POST',
@@ -62,7 +67,11 @@
             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
         },
         success: function(data){
-            $("h5").html(data)
+            $('#result_' + comicId).html(data);
+
+            setTimeout(function() {
+                    $('#result_' + comicId).empty(); // Empty the content of the <h5> tag
+                }, 2000);
         }
         })
     })
